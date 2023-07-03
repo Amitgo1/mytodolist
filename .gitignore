@@ -1,0 +1,77 @@
+# Compiled files
+*.class
+*.o
+*.ko
+*.pyc
+*.pyo
+*.pyd
+*.so
+*.dll
+*.exe
+*.bin
+*.elc
+*.obj
+*.jar
+*.war
+*.ear
+*.swp
+*.swo
+
+# Package files
+*.7z
+*.zip
+*.rar
+*.gz
+*.tar
+*.bz2
+*.xz
+*.lzma
+*.iso
+*.dmg
+
+# Dependency directories
+/node_modules
+/bower_components
+/vendor
+
+# Build directories
+/dist
+/build
+/out
+/.sass-cache
+/.tmp
+
+# Development server files
+/.idea
+/.vscode
+/.vagrant
+/.DS_Store
+/Thumbs.db
+
+# Editor-specific files
+*.sublime-project
+*.sublime-workspace
+*.idea/
+*.vscode/
+
+# Operating System files
+.DS_Store
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+
+# Logs and debugging files
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.vscode/
+*.log
+
+# Environment configuration files
+.env
+.env.*
+env.*
+config.js
+
+# Ignore specific files
+/myfile.txt
