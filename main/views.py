@@ -12,5 +12,9 @@ class MyCreateViewSet(generics.ListCreateAPIView):
 class MyRetriveUpdateDestroyViewSet(generics.RetrieveUpdateDestroyAPIView):
     queryset = MyToDo.objects.all()
     serializer_class = MySerializers
+    
+    
+def index(request):
+    return render(request, 'main/index.html')
 
 # Create your views here.

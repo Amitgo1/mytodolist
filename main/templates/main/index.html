@@ -1,0 +1,255 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <style>
+            .container {
+                max-width: 600px;
+                margin: 0 auto;
+                padding: 20px;
+              }
+            h1 {
+                text-align: center;
+              }
+              
+            form {
+                margin-bottom: 30px;
+              }
+            input[type="text"] {
+                width: 70%;
+                padding: 14px;
+              }
+            button {
+                padding: 15px 25px;
+                background-color: #4CAF50;
+                color: white;
+                border: none;
+                cursor: pointer;
+              }
+            ul {
+                list-style-type: none;
+                padding: 0;
+              }
+              
+            li {
+                display: flex;
+                align-items: center;
+                margin-bottom: 10px;
+              }
+            table {
+                font-family: arial, sans-serif;
+                border-collapse: collapse;
+                width: 100%;
+                }
+              
+            td, th {
+                border: 1px solid #dddddd;
+                text-align: left;
+                padding: 8px;
+              }
+              
+            tr:nth-child(even) {
+                background-color: #dddddd;
+              }
+
+              .modal {
+                display: none; /* Hidden by default */
+                position: fixed; /* Stay in place */
+                z-index: 1; /* Sit on top */
+                left: 0;
+                top: 0;
+                width: 100%; /* Full width */
+                height: 100%; /* Full height */
+                overflow: auto; /* Enable scroll if needed */
+                background-color: rgb(0,0,0); /* Fallback color */
+                background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+                }
+                /* Modal Content/Box */
+                .modal-content {
+                background-color: #fefefe;
+                margin: 15% auto; /* 15% from the top and centered */
+                padding: 20px;
+                border: 1px solid #888;
+                width: 80%; /* Could be more or less, depending on screen size */
+                }
+        </style>
+
+        <script>
+            function myCreate(){
+                var xhr = new XMLHttpRequest();
+                xhr.open('POST','http://127.0.0.1:8000/api/',true);
+                xhr.setRequestHeader('Content-Type','application/json');
+                xhr.onload = function(){
+                    if(xhr.status === 201){
+                        var responsedata = JSON.parse(xhr.responseText);
+                    }
+                    else{
+                        console.log("status error",xhr.status);
+                    }
+                }
+                xhr.onerror = function(){
+                    console.log("onerror hai")
+                }
+                var value = document.getElementById("task-input").value
+                var requestbody = JSON.stringify({
+                    "username":value,
+                    "active":false
+                });
+                xhr.send(requestbody);
+                window.location.reload();
+            }
+            document.addEventListener('DOMContentLoaded', function() {
+                var xhr = new XMLHttpRequest();
+                xhr.open('GET', 'http://127.0.0.1:8000/api/', true);
+                xhr.responseType = 'json';
+                xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var responseData = xhr.response;
+                    for(var i of responseData){
+                        addRow(i.username,i.active,"h",i.id)
+                    }
+                } else {
+                    console.log('Request failed with status code:', xhr.status);
+                }
+                };
+                xhr.onerror = function() {
+                console.log('An error occurred while making the request.');
+                };
+                xhr.send();
+
+                var modal = document.getElementById("myModal");
+                var btnn = document.getElementById("myBtn");
+                var span = document.getElementsByClassName("close")[0];
+                btnn.addEventListener("click",  function() {
+                modal.style.display = "block";
+                });
+                span.addEventListener("click", function() {
+                modal.style.display = "none";
+                });
+                window.addEventListener("click", function(event) {
+                if (event.target == modal) {
+                    modal.style.display = "none";
+                }
+                });
+                
+            });
+            function addRow(a,b,c,d){
+                var tr  = document.createElement("tr")
+                var td1 = document.createElement("td")
+                var td2 = document.createElement("td")
+                var td3 = document.createElement("td")
+                var td4 = document.createElement("td")
+                var btn = document.createElement("button")
+                var ubtn = document.createElement("button")
+                btn.addEventListener("click",deleteRecord)
+                ubtn.addEventListener("click",openPopup)
+                ubtn.value = a+"|"+b+"|"+d
+                btn.value=d
+                btn.textContent = "Delete"
+                ubtn.textContent = "Update"
+                td1.textContent = a
+                td2.textContent = b
+                td4.appendChild(btn)
+                td3.appendChild(ubtn)
+                btn.style.backgroundColor = "red";
+                tr.appendChild(td1)
+                tr.appendChild(td2)
+                tr.appendChild(td3)
+                tr.appendChild(td4)
+                var table = document.getElementById("mytable")
+                table.appendChild(tr)
+            }
+
+            function deleteRecord(){
+                var xhr = new XMLHttpRequest();
+                xhr.open('DELETE', 'http://127.0.0.1:8000/api/'+event.target.value+"/", true);
+                xhr.onload = function() {
+                if (xhr.status === 204) {
+                    console.log('Resource deleted successfully.');
+                } else {
+                    console.log('Request failed with status code:', xhr.status);
+                }
+                };
+                xhr.onerror = function() {
+                console.log('An error occurred while making the request.');
+                };
+
+                xhr.send();
+                window.location.reload();
+
+            }
+
+            function updateRecord(){
+                var xhr = new XMLHttpRequest();
+                xhr.open('PUT', 'http://127.0.0.1:8000/api/'+event.target.value+"/", true);
+                xhr.setRequestHeader('Content-Type', 'application/json');
+                xhr.onload = function() {
+                if (xhr.status === 200) {
+                    var responseData = JSON.parse(xhr.responseText);
+                    console.log(responseData);
+                } else {
+                    console.log('Request failed with status code:', xhr.status);
+                }
+                };
+                xhr.onerror = function() {
+                console.log('An error occurred while making the request.');
+                };
+                var username = document.getElementById("username").value
+                var active = document.getElementById("active").checked
+                var requestBody = JSON.stringify({
+                username: username,
+                active: active
+                });
+                xhr.send(requestBody);
+            }
+           function openPopup(){
+            [username,active,updateid] = event.target.value.split("|")
+            document.getElementById("username").value = username
+            active = active=="false" ? false : true
+            document.getElementById("active").checked = active
+            document.getElementById("updateid").value = updateid
+            var modal = document.getElementById("myModal");
+            modal.style.display = "block";
+           }
+        </script>
+    </head>
+
+    <body>
+        <div class="container">
+            <h1>TODO LIST </h1>
+            <form id="task-form">
+                <input type="text" id="task-input" placeholder="Enter task title" />
+                <input type="hidden" id="myhidden" />
+                <button onclick = "myCreate()" type="button">Add Task</button><br/><br/>
+
+            </form>
+            
+
+        </div>
+        <table id="mytable" >
+            <tr>
+                <th>Task</th>
+                <th>Completed</th>
+                <th>UPDATE</th>
+                <th>DELETE</th>
+            </tr>
+        </table>
+        {% comment %} <button id="myBtn">Open Modal</button> {% endcomment %}
+
+<!-- The Modal -->
+<div id="myModal" class="modal">
+
+  <!-- Modal content -->
+  <div class="modal-content">
+    <span class="close">&times;</span>
+    <form>
+        <input type="text" id="username" placeholder="title" /><br/><br/>
+        <input type="checkbox" id="active">
+        <label for="completed">completed</label><br>
+        <button onclick="updateRecord()" id="updateid" >Update</button>
+
+    </form>
+  </div>
+
+</div>
+    </body>
+</html>
